@@ -1,0 +1,66 @@
+{% extends "tecmabase.html" %}
+{% load static %}
+{% block titulo %} - Reclutamiento {% endblock %}
+{% block user_tools %}
+    Bienvenido, {{ username }}.<a id="salida" href="/logoff" role="button" style="visited: gray;">     Logoff</a>
+{% endblock %}
+
+{% block breadcrumbs %}Reclutamiento{% endblock %}
+
+<!-- Todo este contenido esta dentro de un DIV clase contenedor -->
+{% block content %}
+    {% csrf_token %}
+    <h2>{{ usuario.username }}</h2>
+    <div class="row">
+ 
+        <!-- Seccion de acciones -->
+        <div id="grupo-acciones" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+            <button 
+                type="button" 
+                class="btn btn-info btn-lg"
+                data-toggle="modal"
+                data-target="#modalview"
+                style="width: 180px; height: 60px; color: black;font-size: 20%; border-radius: 10px;"
+                >
+                <span class="glyphicon glyphicon-check"></span> Metas
+            </button>
+        </div>       
+        <div class="col-xs-8 col-sm-8 col-md-9 col-lg-9">
+            <h2  align="center" style="width: 100%; font-size: 40px; background: #C2317F; color: whitesmoke;">Proyectos</h2>
+                <div>
+                    <div id="iconos" style="height: 400px; overflow: auto; overflow-x: hidden;overflow-y: scroll;">
+                        {% for proyecto in listaproyectos %}
+                            <a href="detalleproyecto.html?proyecto={{ proyecto.id }}" role="button">
+                                <img 
+                                    src="/static/archivosTecma/{{ proyecto.proyecto_img }}" 
+                                    alt="{{ proyecto.proyecto_nombre }}" 
+                                    height="150px" 
+                                    border="5"
+                                    class="iconproyecto circle">                        
+                            </a>
+                        <!-- Al seleccionar el icono, el nombre del proyecto se usa como parametro del get -->
+                        <!-- se construye el get de manera dinamica por cada icono -->                    
+                        {% endfor%}
+                    </div>
+                </div>               
+        </div>
+    </div>
+{% endblock %}
+{% block modalview %}
+  <!-- Modal -->
+    <div id="modalview" class="modal fade" style="z-index: 99999;" role="dialog">
+      <div class="modal-dialog" style="width: 100%;">
+    
+        <!-- Modal content-->
+        <div class="modal-content" style="margin: 5% auto;">
+          <div class="modal-body">
+            <iframe src="metasreclutador.html" style="width: 100%; height: 400px;"></iframe>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+    
+      </div>
+    </div>
+{% endblock %}

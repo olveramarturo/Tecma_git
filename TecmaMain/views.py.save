@@ -1,0 +1,536 @@
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import Group, User
+from django.contrib.auth.decorators import login_required
+from django.views.generic import View
+from TecmaMain.forms import FormatoLogin, RegistroReclutado, ProcesoCandidato
+from TecmaMain import models
+import arrow
+import datetime
+
+'''
+    the context keyword is used to pass a list of values to the template
+    this can include all the values that are to be displayed as elements in
+    the app.
+'''
+
+
+
+# Create your views here.
+
+@login_required(login_url='/login/')
+def base(request):
+    '''Funcion de renderizacion de prueba'''
+    tituloHTML = 'Plantilla'
+    return render(request, 'tecmabase.html', {
+        'titulo': tituloHTML,
+        'marca': 'Plataforma Electronica de Reclutamiento',
+        'section': 'Base'})
+
+
+@login_required(login_url='/login/')
+def reclutadormain(request):
+    ''' Recolleccion de la informacion requerida para la pagina principal
+        del reclutador. Debe de reunir la informacion para los iconos y links
+        de cada proyecto
+    '''
+    # Valores de los encabzados y titulos
+    tituloHTML = 'Reclutador'
+    currentuser = request.user
+
+    # Recoleccion de la informacion de proyectos
+    listaproyectos = models.Proyecto.objects.all().values(
+        'id',
+        'proyecto_nombre',
+        'proyecto_img')
+
+    # Retorno de valores hacia la pagina
+    return render(request, 'sitio_reclutador/reclutadormain.html', {
+        'titulo': tituloHTML,
+        'marca': 'Plataforma Electronica de Reclutamiento',
+        'section': 'Reclutador',
+        'username': currentuser,
+        'listaproyectos': listaproyectos})
+
+
+@login_required(login_url='/login/')
+def rhmain(request):
+    '''Funcion de renderizacion de Recursos Humanos'''
+    tituloHTML = 'Recursos Humanos'
+    fechahoy = datetime.datetime.now().date()
+    # Identifica si la solicitud es un GET o un POST
+    # POST = Se selecciona alguna fecha futura
+    # GET = Por default se listan los registros del dia
+    if request.method == 'POST':
+        date = request.POST.get('filtrofecha', '')
+        reclist = models.Reclutado.objects.select_related().filter(
+            rec_fecha_entrevista=date)
+        statuslist = models.ProcesoRH.objects.filter(
+            procesorh_reclutado=reclist.id)
+        # Seleccionar informacion segun la fecha que entra
+        return render(request, 'sitio_rh/rhmain.html', {
+            'username': request.user,
+            'titulo': tituloHTML,
+            'marca': 'Plataforma Electronica de Reclutamiento',
+            'section': 'Recursos Humanos',
+            'rh_candidatos': reclist,
+            'rh_status': statuslist})
+    else:
+        # RH necesita la lista de registrados
+        reclist = list(models.Reclutado.objects.select_related().filter(
+            rec_fecha_entrevista=fechahoy))
+        statuslist = list(models.ProcesoRH.objects.all())
+
+    return render(request, 'sitio_rh/rhmain.html', {
+        'username': request.user,
+        'titulo': tituloHTML,
+        'marca': 'Plataforma Electronica de Reclutamiento',
+        'section': 'Recursos Humanos',
+        'rh_candidatos': reclist,
+        'rh_status': statuslist})
+
+
+#@login_required(login_url='/login/')
+def procesorh(request):
+    ''''''
+    if request.method == 'POST':
+        reclutadoid = request.POST.get('candidatoid', '')
+        form = ProcesoCandidato(request.POST)
+        if form.is_valid():
+            print('Form is valid')
+            #Recuperamos el objeto para modificarlo segun el ID del reclutado
+            objreclutado = models.Reclutado.objects.get(
+                pk=reclutadoid)
+            # Lo mismo para la info del proceso RH
+            objrh = models.ProcesoRH.objects.get(
+                procesorh_reclutado=reclutadoid)
+            # Se actualizan los valores en las dos instancias
+            objreclutado.rec_nombres = form.cleaned_data[
+                'hrfrmreclutado_nombres']
+            objreclutado.rec_apellido_paterno = form.cleaned_data[
+                'hrfrmreclutado_apellido_paterno']
+            objreclutado.rec_apellido_materno = form.cleaned_data[
+                'hrfrmreclutado_apellido_materno']
+            objreclutado.rec_email = form.cleaned_data[
+                'hrfrmreclutado_email']
+            objreclutado.rec_telefono = form.cleaned_data[
+                'hrfrmreclutado_telefono']
+            objreclutado.rec_calle = form.cleaned_data[
+                'hrfrmreclutado_calle']
+            objreclutado.rec_numero = form.cleaned_data[
+                'hrfrmreclutado_numero']
+            objreclutado.rec_ciudad = form.cleaned_data[
+                'hrfrmreclutado_ciudad']
+            objrh.procesorh_llego = form.cleaned_data[
+                'hrfrmreclutado_se_presento']
+            objrh.procesorh_cambiocita = form.cleaned_data[
+                'hrfrmreclutado_cambio_de_cita']
+            objrh.procesorh_entrevista = form.cleaned_data[
+                'hrfrmreclutado_entrevista']
+            objrh.procesorh_contratado = form.cleaned_data[
+                'hrfrmreclutado_contratado']
+            objrh.procesorh_rechazo = form.cleaned_data[
+                'hrfrmreclutado_motivo_de_rechazo']
+            objrh.procesorh_notas = form.cleaned_data[
+                'hrfrmreclutado_notas']
+
+            try:
+                objreclutado.save()
+                objrh.save()
+                return HttpResponse('Candidato Actualizado')
+            except (RuntimeError, TypeError, NameError):
+                return HttpResponse('Errores al intentar grabar')
+
+        else:
+            return HttpResponse('Form is not valid')
+    else:
+        # La solicitud es un GET
+        reclutadoid = request.GET['candidato']
+        procesodata = models.ProcesoRH.objects.filter(
+            procesorh_reclutado_id=reclutadoid)
+        # Verificar la instancia para el proceso RH
+        if procesodata.exists() is False:
+            objproceso = models.ProcesoRH()
+            objproceso.procesorh_reclutado_id = reclutadoid
+            objproceso.save()
+            print('procesodata created')
+        else:
+            # Si ya existe procesodata, verificamos si ya esta procesado
+            if (procesodata.procesorh_contratado != ''
+                or procesodata.procesorh_rechazo != ''):
+                    return HttpResponse('El candidato ya fue procesado')
+            else:
+                # Si el reclutado no esta procesado, continuamos
+                pass
+
+        reclutadodata = models.Reclutado.objects.get(pk=reclutadoid)
+        reclutadonacimiento = reclutadodata.rec_fecha_nacimiento
+        fechaactual = datetime.date.today()
+        deltaedad = (fechaactual - reclutadonacimiento)
+        edad = int(deltaedad.days) / 365
+        form = ProcesoCandidato()
+
+    return render(request, 'sitio_rh/rhprocess.html', {
+        'form': form,
+        'username': request.user,
+        'titulo': 'Proceso de Entrevista - RH',
+        'marca': 'Plataforma electronica de Reclutamiento',
+        'section': 'Proceso RH',
+        'candidatoinfo': reclutadodata,
+        'rhdata': procesodata,
+        'reclutadoedad': edad.__int__()
+        })
+
+
+@login_required(login_url='/login/')
+def coordinarmain(request):
+    '''Funcion de renderizacion de coordinador'''
+    listaproyectos = models.Proyecto.objects.all().values(
+        'id',
+        'proyecto_nombre',
+        'proyecto_img')
+    listareclutador = User.objects.filter(
+        groups__name="Reclutador",
+        is_active=True).values("id", "last_name", "first_name")
+    tituloHTML = 'Coordinador'
+    return render(request, 'sitio_coordinador/coordinarmain.html', {
+        'titulo': tituloHTML,
+        'username': request.user,
+        'proyectos': listaproyectos,
+        'reclutadores': listareclutador,
+        'marca': 'Plataforma Electronica de Reclutamiento',
+        'section': 'Coordinador'})
+
+
+def user_login(request):
+    ''' Proceso de login'''
+    # Si la solicitud es POST, se instancia el objeto form y se toman los
+    # datos
+    if request.method == 'POST':
+        form = FormatoLogin(request.POST)
+        # Verificar los datos regresados en la forma
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = authenticate(
+                username=cd['nomusuario'],
+                password=cd['passusuario']
+                )
+            # Si el usuario es != Ninguno
+            if user is not None:
+                # Si el usuario esta activo
+                if user.is_active:
+                    login(request, user)
+                    #lista de usuarios por grupo de seguridad
+                    groups = Group.objects.all()
+                    # Evaluacion usuarioID pertenece a grupo
+                    for group in groups:
+                        if request.user.groups.filter(name='Reclutador').exists():
+                            base_url = '/sitio_reclutador/reclutadormain.html'
+                        elif request.user.groups.filter(name='Coordinador').exists():
+                            base_url = '/sitio_coordinador/'
+                        elif request.user.groups.filter(name='RH').exists():
+                            base_url = '/sitio_rh/rhmain.html'
+                        elif request.user.groups.filter(name='Admin').exists():
+                            base_url = '/admin/'
+                    # Fin ciclo FOR
+                    return redirect(base_url)
+                else:
+                    # Si el usuario NO esta activo
+                    return HttpResponse('Cuenta bloqueada')
+            else:
+                # Si el usuario NO existe o esta en blanco
+                return HttpResponse('No existe la cuenta')
+    else:
+        # Si el request es de tipo GET, se instancia la forma en blanco
+        form = FormatoLogin()
+
+    return render(request, 'tecmalogin.html', {
+        'form': form,
+        'marca': 'Plataforma Electronica de Reclutamiento',
+        'form_id': 'loginfrm'})
+
+
+@login_required(login_url='/login/')
+def user_logout(request):
+    '''Funcion de logout'''
+    logout(request)
+    return render(request, 'tecmalogout.html', {
+    'marca': 'Plataforma Electronica de Reclutamiento'})
+
+
+@login_required(login_url='/login/')
+def DetalleProyecto(request):
+    '''Funcion llamada al presionar el icono del proyecto, el cual usa
+       el nombre del proyecto como argumento para el GET. Luego este valor
+       se recupera para seleccionar los valores que deben de vincular las
+       siguientes ventanas.
+    '''
+    # Usuario logeado
+    currentuser = request.user
+    # Recpuperamos el ID del proyecto de la solicitud GET
+    proyectoid = request.GET['proyecto']
+    # Buscamos la info del proyecto segun el ID = PK
+    proyectodata = models.Proyecto.objects.get(pk=proyectoid)
+
+    return render(request, 'sitio_reclutador/detalleproyecto.html', {
+        'username': currentuser,
+        'proyectoID': proyectoid,
+        'proyectoDATA': proyectodata,
+        'marca': 'Plataforma Electronica de Reclutamiento'
+        })
+
+
+@login_required(login_url='/login/')
+def metasview(request):
+    ''' Busqueda de metas registradas para el usuario actual. Se asume que
+        la primera llamada es un GET, si se usa el selector de fechas se
+        genera una condicion de filtrado
+    '''
+    # Evaluar el request
+    if request.method == 'GET':
+        # Obtener la lista de ususarios (que se convierta en funcion?)
+        userID = User.objects.filter(username=request.user).values('id')
+        #captura la fecha actual para usarla de filtro de metas
+        fechahoy = datetime.now().date()
+        metaslista = models.MetasReclutador.objects.filter(
+            metas_fecha=fechahoy).values()
+        for metauser in metaslista:
+            if metauser.metas_reclutador == userID:
+                metadehoy = {
+                    'username': request.user,
+                    'fecha': fechahoy,
+                    'enviados': metas_enviados,
+                    'contratados': 3,
+                    'rechazados': 4
+                    }
+
+    # Obtener la lista de proyectos ahora que sabemos cual ID tiene el
+    # usuario
+    projectlist = models.Proyecto.objects.all().values('id', 'proyecto_nombre')
+
+    # Obtener la lista de metas registradas y valores relacionados
+    listametas = models.MetasReclutador.objects.select_related().values(
+        'metas_reclutador',
+        'metas_fecha',
+        'metas_proyecto',
+        'metas_enviados')
+
+    #Se tienen que ubicar los contratados
+    return render(request, 'sitio_reclutador/metasreclutador.html', {
+        'metas_diarias': listametas,
+        'usuario': request.user,
+        'proyectos': projectlist,
+        #'metaslista2': metahoy
+        })
+
+@login_required(login_url='/login/')
+def reclutarview(request):
+    '''Vista utilizada para generar la pantalla de reclutamiento'''
+    if request.method == 'POST':
+        form = RegistroReclutado(request.POST)
+        if form.is_valid():
+            # Procesar la forma
+            objrec = models.Reclutado()  # instanciar el modelo Reclutado
+            objrepo = models.ReporteContacto()  # Instanciar como se entero
+            objrec.rec_nombres = form.cleaned_data['frmrec_nombres']
+            objrec.rec_apellido_paterno = form.cleaned_data[
+                'frmrec_apellido_paterno']
+            objrec.rec_apellido_materno = form.cleaned_data[
+                'frmrec_apellido_materno']
+            objrec.rec_fecha_nacimiento = form.cleaned_data[
+                'frmrec_fecha_nacimiento']
+            objrec.rec_email = form.cleaned_data['frmrec_email']
+            objrec.rec_telefono = form.cleaned_data['frmrec_telefono']
+            objrec.rec_calle = form.cleaned_data['frmrec_calle']
+            objrec.rec_numero = form.cleaned_data['frmrec_numero']
+            objrec.rec_ciudad = form.cleaned_data['frmrec_ciudad']
+            objrec.rec_estado = form.cleaned_data['frmrec_estado']
+            objrec.rec_codigo_postal = form.cleaned_data['frmrec_codigo_postal']
+            objrec.rec_fecha_entrevista = form.cleaned_data[
+                'frmrec_fecha_entrevista']
+            objrec.rec_fecha_captacion = arrow.now().format('YYYY-MM-DD')
+            objrec.rec_proyecto = form.cleaned_data['frmrec_proyecto']
+            objrec.rec_puesto = form.cleaned_data['frmrec_proyecto_puesto']
+            objrec.rec_reclutador = form.cleaned_data['frmrec_reclutador']
+            objrepo.fecha_registro = arrow.now().format('YYYY-MM-DD')
+            objrepo.reclutador = form.cleaned_data['frmrec_reclutador']
+            objrepo.como_se_entero = form.cleaned_data['frmrec_comunicacion']
+            objrepo.punto_reclutamiento = form.cleaned_data[
+                'frmrec_puntoreclutamiento']
+
+            try:
+                objrec.save()
+                objrepo.save()
+                return HttpResponse('Candidato registrado')
+            except (RuntimeError, TypeError, NameError):
+                return HttpResponse('Errores al intentar grabar')
+        else:
+            print((form.errors))
+            return HttpResponse("No se registro")
+    else:
+        # Usuario logeado
+        currentuser = request.user
+        # Recpuperamos el ID del proyecto de la solicitud GET
+        proyectoid = request.GET['proyecto']
+        # Buscamos la info del proyecto segun el ID = PK
+        proyectodata = models.Proyecto.objects.get(pk=proyectoid)
+        form = RegistroReclutado()
+
+    return render(request, 'sitio_reclutador/registroreclutador.html', {
+        'usuario': currentuser,
+        'proyectoID': proyectoid,
+        'proyectoDATA': proyectodata,
+        'form': form,
+        'marca': 'Plataforma Electronica de Reclutamiento',
+        'form_id': 'registroreclutador'})
+
+
+@login_required(login_url='/login/')
+def minuevacasa(request):
+    ''' Funcion que llama los elementos a mostrarse en la pagina de
+        presentacion de TECMA. Recibe el ID del proyecto en la
+        solicitud GET para poder regresar a la pagina anterior.
+    '''
+    # Usuario logeado
+    currentuser = request.user
+    # Recpuperamos el ID del proyecto de la solicitud GET
+    proyectoid = request.GET['proyecto']
+    # Buscamos la info del proyecto segun el ID = PK
+    proyectodata = models.Proyecto.objects.get(pk=proyectoid)
+    #info del video
+    #tecmavideo = models.RecursosVideo.objects.all().values()
+    tecmavideo = models.RecursosVideo.objects.get(recursosvideo_nombre='videoTecmaMain')
+    videolocale = tecmavideo.recursosvideo_archivo
+
+    return render(request, 'sitio_reclutador/minuevacasa.html', {
+        'username': currentuser,
+        'proyectoID': proyectoid,
+        'proyectoDATA': proyectodata,
+        'marca': 'Plataforma Electronica de Reclutamiento',
+        'videoTECMA': videolocale
+        })
+
+
+@login_required(login_url='/login/')
+def mifamiliatecma(request):
+    ''' Funcion que llama los elementos a mostrarse en la pagina de
+        presentacion de TECMA. Recibe el ID del proyecto en la
+        solicitud GET para poder regresar a la pagina anterior.
+    '''
+    # Usuario logeado
+    currentuser = request.user
+    # Recpuperamos el ID del proyecto de la solicitud GET
+    proyectoid = request.GET['proyecto']
+    # Buscamos la info del proyecto segun el ID = PK
+    proyectodata = models.Proyecto.objects.get(pk=proyectoid)
+    #info del video
+    #tecmavideo = models.RecursosVideo.objects.all().values()
+    tecmavideo = models.RecursosVideo.objects.get(recursosvideo_nombre='videoTecmaEvent')
+    videolocale = tecmavideo.recursosvideo_archivo
+
+    return render(request, 'sitio_reclutador/minuevacasa.html', {
+        'username': currentuser,
+        'proyectoID': proyectoid,
+        'proyectoDATA': proyectodata,
+        'marca': 'Plataforma Electronica de Reclutamiento',
+        'videoTECMA': videolocale
+        })
+
+
+@login_required(login_url='/login/')
+def mipago(request):
+    ''' Informacion de pagos. Identifica los puestos relacionados con el
+        proyecto y los regresa en una lista.
+    '''
+
+    # Evaluamos si es una solicitud GET o POST
+    if request.method == "POST":
+        currentuser = request.user
+        puestoid = request.POST.get('selectpuesto', '')
+        proyectoid = request.POST.get('proyectoid', '')
+        proyectodata = models.Proyecto.objects.get(pk=proyectoid)
+        puestoslist = proyectodata.puesto_set.all()
+        print(puestoid)
+        sueldodata = models.Sueldos.objects.get(
+                sueldos_puesto=puestoid)
+        sueldototal = str(
+            float(sueldodata.sueldos_salario_diario) +
+            float(sueldodata.sueldos_bonos))
+        idlist = 0
+        varlist = [
+            idlist,
+
+            sueldodata.sueldos_salario_diario,
+            sueldodata.sueldos_bonos,
+            sueldototal]
+
+        return render(request, 'sitio_reclutador/mipago.html', {
+            'username': currentuser,
+            'proyectoID': proyectoid,
+            'proyectoDATA': proyectodata,
+            'marca': 'Plataforma Electronica de Reclutamiento',
+            'puestos': puestoslist,
+            'sueldosDATA': varlist
+            })
+
+    else:
+        # Ususario logeado
+        currentuser = request.user
+        # recuperar el ID del proyecto
+        proyectoid = request.GET['proyecto']
+        # Buscamos la info del proyecto segun el ID = PK`
+        # a partir del proyecto, tenemos puestos y sueldos
+        proyectodata = models.Proyecto.objects.get(pk=proyectoid)
+        puestoslist = proyectodata.puesto_set.all()
+
+        # Armamos una nueva lista con la info (todo es del mismo proyecto)
+        listasueldos = []
+        idlist = 0
+        for puesto in puestoslist:
+            idlist += 1
+            sueldodata = models.Sueldos.objects.get(
+                sueldos_proyecto=proyectoid,
+                sueldos_puesto=puesto.id)
+                # Algo de Aritmetica
+            sueldototal = str(
+                float(sueldodata.sueldos_salario_diario) +
+                float(sueldodata.sueldos_bonos))
+            varlist = [
+                idlist,
+                proyectodata.proyecto_nombre,
+                puesto.puesto_nombre,
+                sueldodata.sueldos_salario_diario,
+                sueldodata.sueldos_bonos,
+                sueldototal]
+            listasueldos.append(varlist)
+
+        return render(request, 'sitio_reclutador/mipago.html', {
+            'username': currentuser,
+            'proyectoID': proyectoid,
+            'proyectoDATA': proyectodata,
+            'marca': 'Plataforma Electronica de Reclutamiento',
+            'puestos': puestoslist,
+            'sueldosDATA': varlist
+            })
+
+
+@login_required(login_url='/login/')
+def milugardetrabajo(request):
+    ''' Seccion que regresa la informacion de los mapas paga google maps
+    '''
+    # Usuario logeado
+    currentuser = request.user
+    # Recuperar el ID del proyecto
+    proyectoid = request.GET['proyecto']
+    # Recuperar el nombre del proyecto
+    proyectodata = models.Proyecto.objects.get(pk=proyectoid)
+
+    return render(request, 'sitio_reclutador/milugardetrabajo.html', {
+        'proyectoID': proyectoid,
+        'proyectoNOMBRE': proyectodata.proyecto_nombre,
+        'marca': 'Plataforma Electronica de Reclutamiento',
+        'username': currentuser
+        })
+
+

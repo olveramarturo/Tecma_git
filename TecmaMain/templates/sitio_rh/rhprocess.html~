@@ -1,0 +1,173 @@
+{% extends "tecmabase.html" %}
+{% load static %}
+{% block titulo %} - Recursos Humanos {% endblock %}
+{% block user_tools %}
+    Bienvenido, {{ username }}.<a href="/logoff">       Logoff</a>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <a href="rhmain.html">Recursos Humanos</a> >> Proceso de Candidato
+{% endblock %}
+
+{% block content %}
+   
+   Reclutado ID = {{ reclutadoid }}
+    <div id="rhreclutado" style="background-color: ghostwhite;">
+        <form action="./rhprocess.html" method="POST">
+            {% csrf_token %}
+
+        <!-- Seccion de revision de datos -->            
+            <table width="80%" class="table-rh">
+                <tr>
+                    <th class="rh_data">Apellido Paterno:</th>
+                    <th class="rh_data">Apellido Materno:</th>
+                    <th class="rh_data">Nombre(s):</th>            
+                </tr>
+                    <td class="td-rh" align="left"><input 
+                            class="revision" 
+                            name="hrfrmreclutado_apellido_paterno" 
+                            value="{{ candidatoinfo.rec_apellido_paterno }}"/>
+                    </td>
+                    <td class="td-rh" align="left"><input 
+                            class="revision" 
+                            name="hrfrmreclutado_apellido_materno" 
+                            value="{{ candidatoinfo.rec_apellido_materno }}"/>
+                    </td>
+                    <td class="td-rh" align="left"><input 
+                            class="revision" 
+                            name="hrfrmreclutado_nombres" 
+                            value="{{ candidatoinfo.rec_nombres }}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="rh_data">Edad:</th>
+                    <th class="rh_data">Email:</th>
+                    <th class="rh_data">Telefono:</th>            
+                </tr>
+                <tr>
+                    <td class="td-rh" align="left"><input 
+                            class="revision" 
+                            name="hrfrmreclutado_edad" 
+                            value="{{ reclutadoedad }}"/>
+                    </td>
+                    <td class="td-rh" align="left"><input 
+                            class="revision" 
+                            name="hrfrmreclutado_email" 
+                            value="{{ candidatoinfo.rec_email }}"/>
+                    </td>
+                    <td class="td-rh" align="left"><input 
+                            class="revision" 
+                            name="hrfrmreclutado_telefono" 
+                            value="{{ candidatoinfo.rec_telefono }}"/>
+                    </td>           
+                </tr>
+                <tr>
+                    <th class="rh_data">Calle:</th>
+                    <th class="rh_data">Numero:</th>
+                    <th class="rh_data">Ciudad:</th>            
+                </tr>
+                <tr>
+                    <td class="td-rh" align="left"><input 
+                            class="revision" 
+                            name="hrfrmreclutado_calle" 
+                            value="{{ candidatoinfo.rec_calle }}"/>
+                    </td>
+                    <td class="td-rh" align="left"><input 
+                            class="revision" 
+                            name="hrfrmreclutado_numero" 
+                            value="{{ candidatoinfo.rec_numero }}"/>
+                    </td>
+                    <td class="td-rh" align="left"><input 
+                            class="revision" 
+                            name="hrfrmreclutado_ciudad" 
+                            value="{{ candidatoinfo.rec_ciudad }}"/>
+                    </td>           
+                </tr>
+                
+        <!-- Seccion de proceso de RH -->
+            </table>
+            <table width="80%" class="table-rh">
+                <tr>
+                    <th class="rh_data">Se presento?</th>
+                    <th class="rh_data">Cambio de cita:</th>
+                    <th class="rh_data">Entrevista:</th>
+                    <th class="rh_data">Contratado?</th>
+                    <th class="rh_data">Motivo de rechazo:</th>            
+                </tr>
+                <tr style="height: 35px">
+                    <td style="width: 20%">
+                        <select 
+                            name="hrfrmreclutado_se_presento" 
+                            class="selectpicker" 
+                            data-menu-style="dropdown-blue"
+                            style="width: 80%; font-size: 20px; font-weight: bold;">
+                            {% for choice in form.hrfrmreclutado_se_presento.field.choices %}
+                               <option value="{{ choice.0 }}"> {{ choice.1 }}</option>
+                            {% endfor %}
+                        </select>                                    
+                    </td>
+                    <td style="width: 20%">
+                        <div class="input-group date" id="date" style="width: 80%; font-size: 20px; font-weight: bold;">
+                            <input name="cambio_entrevista" class="form-control" type="text"/>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                        </div>                   
+                    </td>
+                    <td style="width: 20%">
+                        <select 
+                            name="hrfrmreclutado_entrevista" 
+                            class="selectpicker test" 
+                            data-menu-style="dropdown-blue"
+                            style="width: 80%; font-size: 20px; font-weight: bold;">
+                            {% for choice in form.hrfrmreclutado_entrevista.field.choices %}
+                               <option value="{{ choice.0 }}"> {{ choice.1 }}</option>
+                            {% endfor %}
+                        </select>                                    
+                    </td>
+                    <td style="width: 20%">
+                        <select 
+                            name="hrfrmreclutado_contratado" 
+                            class="selectpicker test" 
+                            data-menu-style="dropdown-blue"
+                            style="width: 80%; font-size: 20px; font-weight: bold;">
+                            {% for choice in form.hrfrmreclutado_contratado.field.choices %}
+                               <option value="{{ choice.0 }}"> {{ choice.1 }}</option>
+                            {% endfor %}
+                        </select>                                    
+                    </td>
+                    <td style="width: 20%">
+                        <select 
+                            name="hrfrmreclutado_motivo_de_rechazo" 
+                            class="selectpicker test" 
+                            data-menu-style="dropdown-blue"
+                            style="width: 80%; font-size: 20px; font-weight: bold;">
+                            {% for choice in form.hrfrmreclutado_motivo_de_rechazo.field.choices %}
+                               <option value="{{ choice.0 }}"> {{ choice.1 }}</option>
+                            {% endfor %}
+                        </select>                                    
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="3" style="font-size: 25px">Notas:</th>           
+                </tr>
+                <tr>
+                    <td colspan="3" height="100px">
+                        <input 
+                            name="hrfrmreclutado_notas" 
+                            value="* * Llenar si es necesario * *"
+                            style="width: 80%; height: 100%; text-align: left; vertical-align: text-top; font-size: 20px;"
+                         />
+                    </td>
+                    <td colspan="2" style="text-align: center;">
+                        <br>               
+                        <input name="candidatoid" value="{{ candidatoinfo.id }}" hidden="True" />                        
+                        <input type="submit" value="Actualizar" style="width: 150px; height: 50px; font-size: 25px;" />                    
+                    </td>          
+                </tr>
+            </table>
+        </form>            
+
+    </div>    
+	
+{% endblock %}

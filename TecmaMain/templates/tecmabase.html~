@@ -1,0 +1,134 @@
+{% load static %}
+{% load widget_tweaks %}<!DOCTYPE html>
+<html lang="en">
+
+<!-- Seccion de encabezados, todas las referencias de estilos y metadatos aqui -->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- Especificamos que la referencia sera el ancho de la pantalla -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <!-- Librerias generales -->
+        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}">
+        <link type="text/javascript" href="{% static 'bootstrap/js/bootstrap.js' %}">        
+        <script type="text/javascript" src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+        <script src="http://api.html5media.info/1.1.5/html5media.min.js"></script>
+        
+        <!-- Incluir Date Picker -->
+        <script type="text/javascript" src="{% static '/bootstrap-datepicker/js/bootstrap-datepicker.js'%}"></script>
+        <link rel="stylesheet" href="{% static '/bootstrap-datepicker/css/bootstrap-datepicker.css'%}"/>
+        
+        <script type="text/javascript">
+            $(document).ready(function () {
+            	$('#date').datepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    defaultDate: new Date()            	
+            	}).datepicker("setDate", "0");
+            });
+        </script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+            	$('#fechanacimiento').datepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    defaultDate: new Date()            	
+            	}).datepicker("setDate", "0");
+            });
+        </script>
+        <script type="text/javascript">
+
+        function goToNewPage() {
+            var url = document.getElementById('candidato_reclutar').value;
+            if(url != 'none') {
+                window.location = url;
+            }
+        }
+        </script>
+       
+        <style type="text/css">
+            @media screen and (min-width: 768px) {
+                .modal-dialog {
+                  width: 700px; /* New width for default modal */
+                }
+                .modal-sm {
+                  width: 350px; /* New width for small modal */
+                }
+            }
+            @media screen and (min-width: 992px) {
+                .modal-lg {
+                  width: 950px; /* New width for large modal */
+                }
+            }
+        </style>            
+       
+        {% block extrascript %}{% endblock %}     
+                     
+        <!-- Hojas de estilo personalizadas -->
+        <link rel="stylesheet" type="text/css" href="{% static 'css/reclutadormain.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+        {% block jscripts%}{% endblock %}
+       
+        <!-- Seccion de datos que varia segun la navegacion -->
+        <title>TECMA {% block titulo %}{% endblock %}</title>
+        
+    </head> 
+
+<!-- Contenido de la pagina, cambia conforme se navega en la app -->
+    <body id="MainPerBody" class="mh-100 mw-100 bg">
+        <!-- la barra de header usa 10% de la altura -->
+        <div id="HeaderPer" class="row">
+            <div id="holdLogo" class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                <img id="LogoTecma" 
+                     src="/static/archivosTecma/TecmaGeneral/tecma-logo-rgb-trans_1.png" 
+                     alt="Tecma">
+            </div>
+            <div id="marcaTecma" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <img id="tituloapp"
+                     src="/static/archivosTecma/TecmaGeneral/tecma_app_title.png" 
+                     alt="{{ marca }}"
+                    >
+            </div>
+            <div id="userTools" class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                <p id="user_tools"> {% block user_tools %}{% endblock %} </p>
+            </div>            
+        </div>
+        <!-- La barra de navegacion usa otro 10% -->
+        <div id="NavegarTecma">
+            <p id="barraTecma">{% block breadcrumbs %}{% endblock %} </p>
+        </div>      
+        
+        <!-- Para el contenido debe de quedar 100% por 74% -->
+        <div id="areaPrincipal" class="container">
+                <!-- Mensajes de estatus -->
+            {% for message in messages %}
+                <div class="alert {{ message.tags }} alert-dismissible formatitulo" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    {% block modalview %}
+    {% endblock %}
+
+        <script type="text/javascript" src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>                     
+        <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+
+    </body>
+    
+<!-- Pie de pagina esta presente en toda la app -->
+    <footer style="heigth = 4%;">
+        <div id="pieprincipal">
+           <p id="fechaapp">Propiedad de Tecma, S.A. de C.V.   |   {% now "DATE_FORMAT" %}</p>       
+        </div>   
+    </footer>
+</html>

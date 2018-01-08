@@ -1,0 +1,97 @@
+{% load static %}
+{% load widget_tweaks %}<!DOCTYPE html>
+<html lang="en">
+
+<!-- Seccion de encabezados, todas las referencias de estilos y metadatos aqui -->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- Especificamos que la referencia sera el ancho de la pantalla -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <!-- Librerias generales -->
+        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}">
+        <link type="text/javascript" href="{% static 'bootstrap/js/bootstrap.js' %}">        
+        <script type="text/javascript" src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+        
+        <!-- Incluir Date Picker -->
+        <script type="text/javascript" src="{% static '/bootstrap-datepicker/js/bootstrap-datepicker.js'%}"></script>
+        <link rel="stylesheet" href="{% static '/bootstrap-datepicker/css/bootstrap-datepicker.css'%}"/>
+        
+        <script type="text/javascript">
+            $(document).ready(function () {
+            	$('#metasdate').datepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    defaultDate: new Date()            	
+            	}).datepicker("setDate", "0");
+            });
+        </script>
+                    
+        <!-- Hojas de estilo personalizadas -->
+        <link rel="stylesheet" type="text/css" href="{% static 'css/reclutadormain.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+        
+    </head>
+    <body id="modalbody">
+        <div>
+            <form action="./registrometas.html" method="post">
+                {% csrf_token %}
+                <table>
+                    <tr>
+                        <td>Fecha:</td>
+                        <td>
+                            <div class="input-group date" id="metasdate">
+                                <input name="frmmetas_fecha" class="form-control  selectfont" type="text"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Proyecto</td>
+                        <td>
+                            <select name="frmmetas_proyecto" class="selectpicker selectfont" data-title="Select Job" data-style="" data-menu-style="dropdown-blue">
+                            {% for choice in form.frmmetas_proyecto.field.choices %}
+                                <option value="{{ choice.0 }}"> {{ choice.1 }}</option>
+                            {% endfor%}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Puesto</td>
+                        <td>
+                            <select name="frmmetas_puesto" class="selectpicker selectfont" data-title="Select Job" data-style="" data-menu-style="dropdown-blue">
+                            {% for choice in form.frmmetas_puesto.field.choices %}
+                                <option value="{{ choice.0 }}"> {{ choice.1 }}</option>
+                            {% endfor%}
+                            </select>                        
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Requeridos</td>
+                        <td>
+                            <input name="frmmetas_requeridos" class="selectfont" type="text"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Asignar a:</td>
+                        <td>
+                            <select name="frmmetas_reclutador" class="selectpicker selectfont" data-title="Select Job" data-style="" data-menu-style="dropdown-blue">
+                                {% for choice in form.frmmetas_reclutador.field.choices %}
+                                    <option value="{{ choice.0 }}"> {{ choice.1 }}</option>
+                                {% endfor%}
+                            </select>                          
+                        </td>
+                    </tr>            
+                </table>  
+                <input id="registrometasinput" type="submit" value="Registrar">
+            </form>                       
+        </div>
+        <script type="text/javascript" src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bootstrap-datepicker/js/bootstrap-datepicker.js'%}"></script>                     
+    </body>
+   
+</html>

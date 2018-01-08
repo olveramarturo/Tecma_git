@@ -1,0 +1,23 @@
+{% extends "tecmabase.html" %}
+{% load static %}
+{% block titulo %} - Recursos Humanos {% endblock %}
+{% block user_tools %}
+    <p id="uset_tools"> Bienvenido, {{ username }}.  |    <a href="/logoff">Logoff</a> </p>
+{% endblock %}
+
+<!--
+{% block breadcrumbs %}
+    <h2 id="navegarTecma">
+        <a href="rhmain.html">Recursos Humanos</a> >> Proceso de Candidato
+    </h2> 
+{% endblock %}
+-->
+{% block content %}
+<p> La accion se completo con el estatus:</p>
+<br>
+<h1>{{ mensaje }}</h1>
+
+<a href="{{ retorno_a }}"> Regresar a RH Main</a>
+
+
+{% endblock %}

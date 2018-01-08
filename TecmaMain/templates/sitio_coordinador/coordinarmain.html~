@@ -1,0 +1,97 @@
+
+{% extends "tecmabase.html" %}
+{% load static %}
+{% block titulo %} - Coordinacion {% endblock %}
+{% block user_tools %}
+    Bienvenido, {{ username }}.<a id="salida" href="/logoff">     Logoff </a>
+{% endblock %}
+
+{% block breadcrumbs %} Coordinaci&oacuten {% endblock %}
+
+<!-- Todo este contenido esta dentro de un DIV clase contenedor -->
+{% block content %}
+    <div class="row test">
+        <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+        <div><p class="titulos">Reclutadores</p></div>
+            <button 
+                type="button" 
+                class="btn btn-info btn-lg"
+                data-toggle="modal"
+                data-target="#modalmetas"
+                style="color: black;font-size: 25px; border-radius: 5px; width: 240px;"
+                >
+                <span class="glyphicon glyphicon-check"></span> Registro de metas
+            </button>
+            <br>
+            <br>
+            <button 
+                type="button" 
+                class="btn btn-info btn-lg"
+                data-toggle="modal"
+                data-target="#modalreportes"
+                style="color: black;font-size: 25px; border-radius: 5px; width: 240px;"
+                >
+                <span class="glyphicon glyphicon-list"></span> Reportes
+            </button>
+        </div>    
+        <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">      
+            <p>Seccion 2</p>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">        
+        </div>
+    </div>
+    
+    <div class="row test">
+        <div class="test col-xs-6 col-sm-6 col-md-3 col-lg-3">      
+            <p>Comunicacion</p>
+        </div>    
+        <div class="test col-xs-6 col-sm-6 col-md-3 col-lg-3">      
+            <p>Seccion 6</p>
+        </div>
+        <div class="test col-xs-6 col-sm-6 col-md-3 col-lg-3">      
+            <p>Seccion 7</p>        
+        </div>
+        <div class="test col-xs-6 col-sm-6 col-md-3 col-lg-3">      
+            <p>Seccion 8</p>        
+        </div>
+    </div>
+{% endblock %}
+
+{% block modalview %}
+
+    <!-- Modal Registro Metas -->
+    <div id="modalmetas" class="modal fade" style="z-index: 99999;" role="dialog">
+      <div class="modal-dialog" style="width: 100%;">
+    
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-body">
+            <iframe src="registrometas.html" style="width: 60%; height: 500px"></iframe>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+    
+      </div>
+    </div>
+    
+    <!-- Modal Registro Metas -->
+    <div id="modalreportes" class="modal fade" style="z-index: 99999;" role="dialog">
+      <div class="modal-dialog">
+    
+        <!-- Modal content-->
+        <div class="modal-content" style="width: 60%">
+          <div class="modal-body">
+
+            <iframe src="reportemetas.html" style="height: 400px"></iframe>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+    
+      </div>
+    </div>
+
+{% endblock %}

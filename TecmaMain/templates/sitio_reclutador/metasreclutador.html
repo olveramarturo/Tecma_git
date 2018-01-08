@@ -1,0 +1,112 @@
+{% load static %}
+{% load widget_tweaks %}<!DOCTYPE html>
+<html lang="en">
+
+<!-- Seccion de encabezados, todas las referencias de estilos y metadatos aqui -->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- Especificamos que la referencia sera el ancho de la pantalla -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <!-- Librerias generales -->
+        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}">
+        <link type="text/javascript" href="{% static 'bootstrap/js/bootstrap.js' %}">        
+        <script type="text/javascript" src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+        
+        <!-- Incluir Date Picker -->
+        <script type="text/javascript" src="{% static '/bootstrap-datepicker/js/bootstrap-datepicker.js'%}"></script>
+        <link rel="stylesheet" href="{% static '/bootstrap-datepicker/css/bootstrap-datepicker.css'%}"/>
+        
+        <script type="text/javascript">
+            $(document).ready(function () {
+            	$('#metasdate').datepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    defaultDate: new Date()            	
+            	}).datepicker("setDate", '1d');
+            });
+        </script>
+                    
+        <!-- Hojas de estilo personalizadas -->
+        <link rel="stylesheet" type="text/css" href="{% static 'css/reclutadormain.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+        
+    </head>
+    <body id="modalbody">
+    <div>
+        <!-- Form code begins -->
+        <form id="MetasSelectFecha" action="./metasreclutador.html" method="post">
+            {% csrf_token %}                  
+
+            <table>
+                <tr>
+                    <td>
+                        <div class="input-group date" id="metasdate">
+                            <input 
+                                name="filtrofecha" 
+                                class="form-control" 
+                                style="font-size = 300%; font-weight: bold;"                                
+                                type="text"/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>                
+                        </div>
+                        <input name="userid" type="hidden" value="{{ usuario.id }}"/>     
+                    </td>
+                    <td>
+                        <button 
+                            type="submit" 
+                            name="botonenvio" 
+                            value="Buscar"
+                            style="font-size: 140%;"
+                            class="btn btn-primary">Buscar por fecha
+                        </button>
+                    </td>                
+                </tr>            
+            </table>
+        </form>
+    </div>
+        <div id="reporteMetas" class="row" style="margin-right: 10px; margin-left: 10px;">
+            <h2>Metas de Captacion - {{ usuario.username }}</h2>
+            <table id="metaslist" style="font-size: 15px; width: 100%;">
+                <!-- Encabezados de la tabla -->
+                <tr>
+                    <th rowspan="2" class="formatitulo" style="font-size: 100%">Proyecto</th>
+                    <th rowspan="2" class="formatitulo" style="font-size: 100%">Posicion</th>
+                    <th rowspan="2" class="formatitulo" style="font-size: 100%">Requeridos</th>
+                    <th colspan="2" class="formatitulo" style="font-size: 100%">Dia</th>
+                    <th colspan="2" class="formatitulo" style="font-size: 100%">Acumulado</th>
+                    <th colspan="2" class="formatitulo" style="font-size: 100%">Efectividad</th>
+                </tr>
+                <tr>
+                    <th class="formatitulo" style="font-size: 100%">Enviados</th>
+                    <th class="formatitulo" style="font-size: 100%">Contratados</th>
+                    <th class="formatitulo" style="font-size: 100%">Enviados</th>
+                    <th class="formatitulo" style="font-size: 100%">Contratados</th>
+                    <th class="formatitulo" style="font-size: 100%">Diario</th>
+                    <th class="formatitulo" style="font-size: 100%">Semanal</th>
+                </tr>
+                <!-- Valores -->
+                {% for key, linea in reporte.items %}                
+                    <tr>
+
+                        <td class="selectfont" style="width: 40px; font-size: 100%">{{ linea.1 }}</td>
+                        <td class="selectfont" style="width: 40px; font-size: 100%">{{ linea.2 }}</td>
+                        <td class="selectfont" style="width: 40px; font-size: 100%">{{ linea.3 }}</td>
+                        <td class="selectfont" style="width: 40px; font-size: 100%">{{ linea.4 }}</td>
+                        <td class="selectfont" style="width: 40px; font-size: 100%">{{ linea.5 }}</td>
+                        <td class="selectfont" style="width: 40px; font-size: 100%">{{ linea.6 }}</td>
+                        <td class="selectfont" style="width: 40px; font-size: 100%">{{ linea.7 }}</td>
+                        <td class="selectfont" style="width: 40px; font-size: 100%">{{ linea.8|floatformat:"2" }}</td>
+                        <td class="selectfont" style="width: 40px; font-size: 100%">{{ linea.9|floatformat:"2" }}</td>
+                    </tr>
+                {% endfor%}                
+            </table>
+        </div>
+        <script type="text/javascript" src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bootstrap-datepicker/js/bootstrap-datepicker.js'%}"></script>                     
+    </body>
+   
+</html>

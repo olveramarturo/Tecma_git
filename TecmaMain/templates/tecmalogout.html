@@ -1,0 +1,17 @@
+
+{% extends "tecmabase.html" %}
+{% block titulo %} - Logout {% endblock %}
+{% block content %}
+<div id="tecmalogoff" style="margin-top: 10%;">
+    <p align="center" style="font-size: 30px; background: black; color: whitesmoke;">Salida de PER</p>          
+    <br>
+    <p align="center" style="font-size: 25px; font-weight: bold;">Usted ha salido del sistema.</p>
+    <br>
+    <p align="center" style="font-size: 25px; font-weight: bold;">Presione el boton para volver a entrar.</p>
+    <br>
+    <br>
+    <div align="center">             
+        <a id="botonregreso" href="/login/" class="btn btn-default btn-lg" role="button">Regreso a login</a>
+    </div>
+</div>
+{% endblock %}

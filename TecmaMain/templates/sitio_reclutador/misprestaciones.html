@@ -1,0 +1,108 @@
+{% extends "tecmabase.html" %}
+{% load static %}
+{% block titulo %} - Reclutamiento {% endblock %}
+{% block user_tools %}
+    Bienvenido, {{ username }}.<a href="/logoff">      Logoff</a>
+{% endblock %}
+
+{% block extrajscript %}
+{% endblock %}
+
+{% block breadcrumbs %} 
+    <a href="reclutadormain.html">Reclutamiento</a>
+        >>  
+    <a href="detalleproyecto.html?proyecto={{ proyectoID }}">Proyecto</a>
+        >> Mis prestaciones
+{% endblock %}
+
+{% block content %}
+ 
+    <!-- Primera seccion del encabezado --> 
+    <div id="sueldohdr" class="row" style="width: 100%;">
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
+        <div id="icono_proyecto" class="col-xs-4 col-sm-4 col-md-2 col-lg-2" style="text-align: center; margin-top: 5%;">
+            <img src="/static/archivosTecma/{{ proyecto.proyecto_img }}" alt="{{ proyecto.proyecto_nombre }}" width="100%" border="5">
+        </div>
+        <div id="texto_proyecto" class="col-xs-6 col-sm-6 col-md-8 col-lg-8">
+            <h2 style="font-size: 25px; margin-top: 7%"> {{ proyecto.proyecto_descripcion }}</h2>
+        </div>
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>      
+    </div>
+    
+<!-- +++++++++++++++ Tabla con resultados ++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+    <div id="sueldodetalle" class="row" style="width: 100%; margin-top: 5%;">
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
+        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+            <table align="center" style="width: 100%;">
+                <tr>
+                    <td 
+                        width="35%"
+                        align="center" 
+                        style="font-size: 200%; font-weight: bold; height: 50px;">
+                        <img 
+                            src="/static/archivosTecma/{{ prestaciones.0.prestacion_imagen }}"                          
+                            alt="{{ prestaciones.0.prestaciones_nombre }}"
+                            class="btnprestacion"                                                            
+                            >
+                        {{ prestaciones.0.prestaciones_nombre }}
+                    </td>
+                    <td 
+                        width="30%"
+                        align="center" 
+                        style="font-size: 200%; font-weight: bold; height: 50px;">
+                        <img 
+                            src="/static/archivosTecma/{{ prestaciones.1.prestacion_imagen }}"                          
+                            alt="{{ prestaciones.1.prestaciones_nombre }}"
+                            class="btnprestacion"                                
+                            >
+                        {{ prestaciones.1.prestaciones_nombre }}
+                    </td>
+                    <td 
+                        width="35%"
+                        align="center" 
+                        style="font-size: 200%; font-weight: bold; height: 50px;">
+                        <img 
+                            src="/static/archivosTecma/{{ prestaciones.2.prestacion_imagen }}"                          
+                            alt="{{ prestaciones.2.prestaciones_nombre }}"
+                            class="btnprestacion"                                
+                            >
+                        {{ prestaciones.2.prestaciones_nombre }}
+                    </td>                    
+                </tr>
+                <tr>
+                    <td 
+                        align="center" 
+                        style="font-size: 200%; font-weight: bold; height: 50px;">
+                        <img 
+                            src="/static/archivosTecma/{{ prestaciones.3.prestacion_imagen }}"                          
+                            alt="{{ tipo.prestaciones_nombre }}"
+                            height="100%"                                
+                            >
+                        {{ prestaciones.3.prestaciones_nombre }}
+                    </td>
+                    <td 
+                        align="center" 
+                        style="font-size: 200%; font-weight: bold; height: 50px;">
+                        <img 
+                            src="/static/archivosTecma/{{ prestaciones.4.prestacion_imagen }}"                          
+                            alt="{{ tipo.prestaciones_nombre }}"
+                            class="btnprestacion"                                
+                            >
+                        {{ prestaciones.4.prestaciones_nombre }}
+                    </td>
+                                        <td 
+                        align="center" 
+                        style="font-size: 200%; font-weight: bold; height: 50px;">
+                        <img 
+                            src="/static/archivosTecma/{{ prestaciones.5.prestacion_imagen }}"                          
+                            alt="{{ tipo.prestaciones_nombre }}"
+                            class="btnprestacion"                                
+                            >
+                        {{ prestaciones.5.prestaciones_nombre }}
+                </tr>
+            </table>             
+        </div>
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>                   
+    </div>
+    
+{% endblock %}

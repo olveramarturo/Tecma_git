@@ -1,0 +1,121 @@
+{% extends "tecmabase.html" %}
+{% load static %}
+{% block titulo %} - Recursos Humanos {% endblock %}
+{% block user_tools %}
+    Bienvenido, {{ username }}.<a href="/logoff">      Logoff</a>
+{% endblock %}
+
+{% block breadcrumbs %}
+    Recursos Humanos
+{% endblock %}
+
+{% block content %}
+    
+    <div id="rhcounters" class="row" style="height: 20%; margin-left: 2%; margin-right: 2%;">
+        <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+
+            <!-- Form code begins -->
+                <form id="countnew" action="./rhmain.html" method="post">
+                    {% csrf_token %}                  
+                    <div class="input-group date" id="date">
+                        <input name="filtrofecha" class="form-control  selectfont" type="text"/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                    </div>
+                    <input id="filtro" type="submit" value="Filtrar"/>
+                </form>
+            <!-- Form code ends --> 
+
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3"></div>      
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            
+            <table title="Diario" class="TecmaCounters">
+                <tr>
+                    <td colspan=2 class="formatitulo">Conteo Diario</td>
+                </tr>
+                <tr>
+                    <td class="rh_counts">Candidatos</td>
+                    <td class="rh_resultados">{{ cntcandidatos }}</td>
+                </tr>
+                </tr>
+                    <td class="rh_counts">Procesados</td>
+                    <td class="rh_resultados">{{ cntprocesados }}</td>
+                </tr>
+                <tr>
+                    <td class="rh_counts">Contratados</td>
+                    <td class="rh_resultados">{{ cntcontratados }}</td>
+                </tr>
+                <tr>
+                    <td class="rh_counts">Rechazados</td>
+                    <td class="rh_resultados">{{ cntnocontrato }}</td>
+                </tr>
+                <tr>
+                    <td class="rh_counts">Razon (Ratio)</td>
+                    <td class="rh_resultados">{{ cntratio|floatformat:"2" }}</td>
+                </tr>            
+            
+            </table>        
+        </div>
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            <table class="TecmaCounters">
+                <tr>
+                    <td colspan=2 class="formatitulo">Conteo Semanal</td>
+                </tr>
+                <tr>
+                    <td class="rh_counts">Candidatos</td>
+                    <td class="rh_resultados">{{ periodoenviados }}</td>
+                </tr>
+                <tr>
+                    <td class="rh_counts">Procesados</td>
+                    <td class="rh_resultados">{{ periodoprocesados }}</td>
+                </tr>
+                <tr>
+                    <td class="rh_counts">Contratados</td>
+                    <td class="rh_resultados">{{ periodocontratos}}</td>
+                </tr>
+                <tr>
+                    <td class="rh_counts">Rechazados</td>
+                    <td class="rh_resultados">{{ periodorechazos }}</td>
+                </tr>
+                <tr>
+                    <td class="rh_counts">Razon (Ratio)</td>
+                    <td class="rh_resultados">{{ periodoratio|floatformat:"2" }}</td>
+                </tr>            
+            
+            </table>  
+        </div>     
+    </div>
+    <br>
+    <br>
+    <div id="reporteCandidatos" class="row">
+        <table class="TecmaCounters test" style="text-align: left;" border="3">
+                <tr bgcolor="gray" style="color: whitesmoke;">
+                    <th class="rh_head">ID</th>
+                    <th class="rh_head">Fecha</th>
+                    <th class="rh_head">Candidato</th>
+                    <th class="rh_head">Proyecto</th>
+                    <th class="rh_head">Puesto</th>
+                    <th class="rh_head">&iquestContratado?</th>
+                    <th class="rh_head">Raz&oacuten de Rechazo</th>
+                </tr>
+                    {% for key, value in rh_candidatos.items %}
+                        <tr>
+                            <td class="rh_data">{{ value.0 }}</td>
+                            <td class="rh_data">{{ value.1 }}</td>
+                            <td class="rh_data">
+                                <a href="rhprocess.html?candidato={{ value.0 }}" role="button">
+                                    {{ value.2 }} {{ value.3 }} {{ value.4 }}
+                                </a>                        
+                            </td>
+                            <td class="rh_data">{{ value.5 }}</td>
+                            <td class="rh_data">{{ value.6 }}</td>
+                            <td class="rh_data">{{ value.7 }}</td>
+                            <td class="rh_data">{{ value.8 }}</td>
+                        </tr>
+                    {% endfor %}
+        </table>
+    </div>
+
+{% endblock %}

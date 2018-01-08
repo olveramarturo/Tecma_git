@@ -1,0 +1,148 @@
+{% extends "tecmabase.html" %}
+{% load static %}
+{% block titulo %} - Reclutamiento {% endblock %}
+{% block user_tools %}
+    Bienvenido, {{ usuario }}.<a href="/logoff">    Logoff</a>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <a href="reclutadormain.html">Reclutamiento</a>
+        >>  
+    <a href="detalleproyecto.html?proyecto={{ proyectoID }}">Proyecto</a>
+        >> Registro de Candidato: {{ proyectoDATA.proyecto_nombre }}
+ {% endblock %}
+
+{% block content %}
+    {% csrf_token %}
+    <form id="formregistro" action="./registroreclutador.html" method="post" class="btndisable">
+        {% csrf_token %}
+        
+        <table border="2" width="100%">             
+            <tr>
+                <th class="formatitulo" width="25%">{{ form.frmrec_proyecto_puesto.label }}</th>
+                <th class="formatitulo" width="25%">{{ form.frmrec_puntoreclutamiento.label }}</th>
+                <th class="formatitulo" width="25%">{{ form.frmrec_comunicacion.label }}</th>
+                <th class="formatitulo" width="25%">{{ form.frmrec_fecha_entrevista.label }}</th>                             
+            </tr>
+            <tr>
+                <td>
+                    <select name="frmrec_proyecto_puesto" class="selectpicker selectfont" data-title="Select Job" data-style="" data-menu-style="dropdown-blue">
+                        {% for choice in proyectoPUESTO %}
+                            <option value="{{ choice.id }}"> {{ choice.puesto_nombre }}</option>
+                        {% endfor%}
+                    </select>
+                </td>
+                <td>
+                    <select name="frmrec_puntoreclutamiento" class="selectpicker  selectfont" data-title="Select Gender" data-style="btn-default btn-block" data-menu-style="dropdown-blue">
+                        {% for choice in form.frmrec_puntoreclutamiento.field.choices %}
+                           <option value="{{ choice.0 }}"> {{ choice.1 }}</option>
+                        {% endfor %}
+                    </select>                
+                </td>
+                <td>
+                    <select name="frmrec_comunicacion" class="selectpicker  selectfont" data-title="Select Gender" data-style="btn-default btn-block" data-menu-style="dropdown-blue">
+                        {% for choice in form.frmrec_comunicacion.field.choices %}
+                           <option value="{{ choice.0 }}"> {{ choice.1 }}</option>
+                        {% endfor %}
+                    </select>                           
+                </td>
+                <td>
+                    <div class="input-group date" id="date">
+                        <input name="frmrec_fecha_entrevista" class="form-control  selectfont" type="text"/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                    </div>
+                </td>            
+            </tr>
+        </table>
+        <table border="2" width="100%">
+            <tr>
+                <th class="formatitulo" width="35%">{{ form.frmrec_apellido_paterno.label }}</th>                    
+                <th class="formatitulo" width="30%">{{ form.frmrec_apellido_materno.label }}</th>
+                <th class="formatitulo" width="35%">{{ form.frmrec_nombres.label }}</th>                    
+            </tr>
+            <tr>
+                <td><!-- {{ form.frmrec_apellido_paterno }} -->
+                    <input name="frmrec_apellido_paterno" class="selectfont" type="text"/>
+                </td>            
+                <td><!-- {{ form.frmrec_apellido_materno }} -->
+                    <input name="frmrec_apellido_materno" class="selectfont" type="text"/>
+                </td>            
+                <td><!-- {{ form.frmrec_nombres }} -->
+                    <input name="frmrec_nombres" class="selectfont" type="text"/></td>
+            </tr>        
+            <tr>
+                <th class="formatitulo" width="35%">{{ form.frmrec_fecha_nacimiento.label }}</th>                    
+                <th class="formatitulo" width="30%">{{ form.frmrec_email.label }}</th>
+                <th class="formatitulo" width="35%">{{ form.frmrec_telefono.label }}</th>                    
+            </tr>
+            <tr>
+                <td>
+                    <div class="input-group date" id="fechanacimiento">
+                        <input name="frmrec_fecha_nacimiento" class="form-control selectfont" type="text"/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                    </div>
+                </td>            
+                <td><!-- {{ form.frmrec_email }} -->
+                    <input name="frmrec_email" class="selectfont" type="email"/>                
+                </td>            
+                <td><!-- {{ form.frmrec_telefono }} -->
+                    <input name="frmrec_telefono" class="selectfont" type="text"/>                                
+                </td>
+            </tr>
+        </table>
+        <table border="2" width="100%">
+            <tr>
+                <th class="formatitulo" colspan="2">{{ form.frmrec_calle.label }}</th>
+                <th class="formatitulo">{{ form.frmrec_numero.label }}</th>            
+            </tr>
+            <tr>
+                <td colspan="2"><!-- {{ form.frmrec_calle }} -->
+                    <input name="frmrec_calle" class="selectfont" type="text"/>                
+                </td>
+                <td><!-- {{ form.frmrec_numero }} -->
+                    <input name="frmrec_numero" class="selectfont" type="text"/>                
+                </td>            
+            </tr>
+            <tr>
+                <th class="formatitulo">{{ form.frmrec_ciudad.label }}</th>
+                <th class="formatitulo">{{ form.frmrec_estado.label }}</th>
+                <th class="formatitulo">{{ form.frmrec_codigo_postal.label }}</th> 
+            </tr>
+            <tr>
+                <td>
+                    <select name="frmrec_ciudad" class="selectpicker selectfont" data-style="btn-default btn-block" data-menu-style="dropdown-blue">
+                        {% for choice in form.frmrec_ciudad.field.choices %}
+                           <option value="{{ choice.0 }}"> {{ choice.1 }}</option>
+                        {% endfor %}
+                    </select>                                   
+                </td>            
+                <td>
+                    <select name="frmrec_estado" class="selectpicker selectfont" data-style="btn-default btn-block" data-menu-style="dropdown-blue">
+                        {% for choice in form.frmrec_estado.field.choices %}
+                           <option value="{{ choice.0 }}"> {{ choice.1 }}</option>
+                        {% endfor %}
+                    </select>                                   
+                </td>
+                <td><!--{{ form.frmrec_codigo_postal }} -->
+                    <input name="frmrec_codigo_postal" class="selectfont" type="text"/>                                
+                </td>           
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <!-- Valores del entorno que entran como parte del registro -->
+                    <input name="frmrec_proyecto" type="hidden" value="{{ proyectoID }}"/>
+                    <input name="frmrec_reclutador" type="hidden" value="{{ usuario }}"/>
+                    {% now "Y-m-d" as timeStamp %}       
+                    <input name="frmrec_fecha_captacion" type="hidden" value="{{ timeStamp }}"/>
+                    <br>               
+                    <input id="registroreclutado" type="submit" value="Registrar">           
+                </td>            
+            </tr>  
+        </table>
+    </form>	
+  
+{% endblock %}

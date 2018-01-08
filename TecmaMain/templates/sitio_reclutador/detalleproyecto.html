@@ -1,0 +1,72 @@
+{% extends "tecmabase.html" %}
+{% load static %}
+{% block titulo %} - Reclutamiento {% endblock %}
+{% block user_tools %}
+    Bienvenido, {{ username }}.<a href="/logoff">        Logoff</a>
+{% endblock %}
+
+{% block breadcrumbs %} 
+    <a href="reclutadormain.html" class="offcolor">Reclutamiento</a> >>  Proyecto
+{% endblock %}
+{% block content %}
+    {% csrf_token %}
+    <div class="row" style="height: 5%">
+    </div>
+    <div class="row" style="width: 100%;">
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
+        <div id="icono_proyecto" class="col-xs-10 col-sm-10 col-md-2 col-lg-2" style="text-align: center; margin-top: 5%;">
+            <img src="/static/archivosTecma/{{ proyectoDATA.proyecto_img }}" alt="{{ proyectoDATA.proyecto_nombre }}" width="90%" border="5">
+        </div>
+        <div class="col-xs-10 col-sm-10 col-md-8 col-lg-8">
+            <h2 id="texto_proyecto" style="font-size: 25px; margin-top: 3%;">{{ proyectoDATA.proyecto_descripcion }}</h2>
+        </div>
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>      
+    </div>
+    <br>
+    <div>
+        <table id="accionesreclutar">
+            <tr>
+                <td>
+                    <a href="minuevacasa.html?proyecto={{ proyectoID }}" role="button">
+                        <img class="btnNavegadores" src="/static/archivosTecma/TecmaGeneral/tecma_btn_casa.png" 
+                            alt="{{ proyecto.proyecto_nombre }}">                 
+                    </a> 
+                </td>
+                <td>
+                    <a href="mipago.html?proyecto={{ proyectoID }}" role="button">
+                        <img class="btnNavegadores" src="/static/archivosTecma/TecmaGeneral/tecma_btn_pago.png" 
+                            alt="{{ proyecto.proyecto_nombre }}">                       
+                    </a>
+                </td>
+                <td>
+                    <a href="misprestaciones.html?proyecto={{ proyectoID }}" role="button">
+                        <img class="btnNavegadores" src="/static/archivosTecma/TecmaGeneral/tecma_btn_prestaciones.png" 
+                            alt="{{ proyecto.proyecto_nombre }}">                       
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="milugardetrabajo.html?proyecto={{ proyectoID }}" role="button">
+                        <img class="btnNavegadores" src="/static/archivosTecma/TecmaGeneral/tecma_btn_ubicacion.png" 
+                            alt="{{ proyecto.proyecto_nombre }}">                 
+                    </a> 
+                </td>
+                <td>
+                    <a href="mifamiliatecma.html?proyecto={{ proyectoID }}" role="button">
+                        <img class="btnNavegadores" src="/static/archivosTecma/TecmaGeneral/tecma_btn_familia.png" 
+                            alt="{{ proyecto.proyecto_nombre }}"> 
+                    </a>                             
+                </td>
+                <td>
+                    <a href="registroreclutador.html?proyecto={{ proyectoID }}" role="button">
+                        <img class="btnNavegadores" src="/static/archivosTecma/TecmaGeneral/tecma_btn_integracion.png" 
+                            alt="{{ proyecto.proyecto_nombre }}"> 
+                    </a>
+                </td>
+
+            </tr>
+        </table>    
+    </div>
+
+{% endblock %}

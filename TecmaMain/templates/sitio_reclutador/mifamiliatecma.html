@@ -1,0 +1,34 @@
+{% extends "tecmabase.html" %}
+{% load static %}
+{% block titulo %} - Reclutamiento {% endblock %}
+{% block user_tools %}
+    Bienvenido, {{ username }}.<a href="/logoff">      Logoff</a>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <a href="reclutadormain.html">Reclutamiento</a>
+        >>  
+    <a href="detalleproyecto.html?proyecto={{ proyectoID }}">Proyecto</a>
+        >> Mi familia Tecma
+{% endblock %}
+
+{% block content %}
+    {% csrf_token %}
+    
+    <div class="row" style="height: 480px;">
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1" style="text-align: center;"></div>   
+        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10" style="height: 90%; margin-top: 3%;">
+
+            <video height="100%" autoplay controls preload="true">
+                <source src="/static/archivosTecma/{{ videoTECMAfx }}" type="video/mp4"></source>
+                <embed 
+                    SRC="/static/archivosTecma/{{ videoTECMAfx }}" 
+                    TYPE=video/mp4 
+                    AUTOPLAY="true">
+                </embed>
+                <p> Video no soportado </p>
+          </video>
+        </div>
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1" style="text-align: center;"></div>        
+    </div>
+{% endblock %}
